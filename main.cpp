@@ -1,13 +1,6 @@
 #include <iostream>
 #include <string>
 using namespace std;
-//Menu:
-// i. add-item / remove-item / edit-item
-// ii. add-user / block-user / unblock-user (si aplica)
-// iii. loan / return
-// iv. search <criterio> y list
-// v. report (estadísticas del bloque F: ver variantes)
-// vi. exit
 
 void Menu(){
 

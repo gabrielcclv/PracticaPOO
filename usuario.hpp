@@ -32,3 +32,12 @@ class Usuario
 
     
 };
+
+class Prestamo : public Usuario{
+    private:
+    
+    public: 
+    void returnItem;
+    void loanItem;
+    
+}
