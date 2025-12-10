@@ -32,7 +32,7 @@ string unescapeCSV(string campo) {
     return campo.substr(1, campo.size() - 2);
   }
   return campo;
-}
+};
 
 void Biblioteca::cargarUsuariosCSV(string ruta) {
   ifstream file(ruta);
@@ -52,13 +52,17 @@ void Biblioteca::cargarUsuariosCSV(string ruta) {
     Usuario *u = new Usuario(id, nombre, rol, sancion, bloqueado);
     usuarios.push_back(u);
   }
-}
+};
 
 void Biblioteca::cargarMaterialesCSV(string ruta) {
-  ifstream file(ruta);
+    ifstream file(ruta);
+    if (!file.is_open()) {
+        cerr << "Error al abrir " << ruta << endl;
+        return;
+    }
 
-  string linea;
-  getline(file, linea);
+    string linea;
+    getline(file, linea); // Saltar cabecera
 
   while (getline(file, linea)) {
     auto campos = splitCSV(linea);
@@ -67,25 +71,74 @@ void Biblioteca::cargarMaterialesCSV(string ruta) {
     string tipo = unescapeCSV(campos[1]);
     string titulo = unescapeCSV(campos[2]);
     string autor = unescapeCSV(campos[3]);
-    string year = unescapeCSV(campos[4]);
-    string genero = unescapeCSV(campos[5]);
-    int director = stoi(campos[6]);
-    string editorial = unescapeCSV(campos[7]);
-    int director = stoi(campos[7]);
-    double sancion = stod(campos[8]);
-    bool bloqueado = (campos[9] == "true");
+    int year = stoi(campos[4]);
+    string genero    = unescapeCSV(campos[5]);
+    string editorial  = unescapeCSV(campos[6]);
 
-    Item *i = new Item(id, tipo, titulo, autor, year, genero, editorial, director);
+    Item* i = nullptr;
+
+    if (tipo == "Book") {
+      int isbn = stoi(campos[7]);
+
+      i = new Libro(id, tipo, titulo, genero, autor, year, editorial, isbn);
+    }
+
+    else if (tipo == "Journal") {
+      int issn = stoi(campos[7]);
+
+      i = new Revista(id, tipo, titulo, genero, autor, year, editorial, issn);
+    }
+
+    else if (tipo == "Thesis") {
+      string director = unescapeCSV(campos[7]);
+
+      if (year < 1980) {
+        cerr << "ERROR: Tesis con año < 1980. ID=" << id << endl;
+        continue;
+      }
+
+      i = new Thesis(id, tipo, titulo, genero, autor, year, editorial, director);
+    }
+
+    else {
+      cerr << "Tipo de item desconocido: " << tipo << endl;
+      continue;
+    }
+
+    // Añadir al catálogo
     items.push_back(i);
   }
+};
+
+void Biblioteca::cargarPrestamosCSV(string ruta) {
+    ifstream file(ruta);
+    if (!file.is_open()) {
+        cerr << "Error al abrir " << ruta << endl;
+        return;
+    }
+
+    string linea;
+    getline(file, linea); // Saltar cabecera
+
+    while (getline(file, linea)) {
+        auto campos = splitCSV(linea);
+
+        int id = stoi(campos[0]);
+        int idUsuario = stoi(campos[1]);
+        int idItem = stoi(campos[2]);
+        chrono::system_clock::time_point fechaInicio =
+            chrono::system_clock::from_time_t(stoi(campos[3]));
+        chrono::system_clock::time_point fechaLimite =
+            chrono::system_clock::from_time_t(stoi(campos[4]));
+        chrono::system_clock::time_point fechaDevolucion =
+            chrono::system_clock::from_time_t(stoi(campos[5]));
+        int sancionAcumulada = stoi(campos[6]);
+        bool devuelto = (campos[7] == "true");
+
+        Prestamo *p = new Prestamo(id, idUsuario, idItem, fechaInicio, fechaLimite, fechaDevolucion, sancionAcumulada, devuelto);
+        prestamos.push_back(p);
+    }
 }
-
-
-
-
-
-
-
 
 void Biblioteca::addItem(Item *item) { items.push_back(item); };
 

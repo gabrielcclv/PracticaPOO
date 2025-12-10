@@ -40,8 +40,7 @@ private:
 
 public:
   // Constructor
-  Libro(int id, string titulo, string genero, string autor, int year,
-        string editorial, int isbn);
+  Libro(int id, string tipo, string titulo, string genero, string autor, int year, string editorial, int isbn);
   // Destructor
   ~Libro();
   // Metodos
@@ -56,8 +55,7 @@ private:
 
 public:
   // Constructor
-  Revista(int id, string titulo, string genero, string autor, int year,
-          string editorial, int issn);
+  Revista(int id, string tipo, string titulo, string genero, string autor, int year, string editorial, int issn);
   // Destructor
   ~Revista();
   // Metodos
@@ -73,8 +71,7 @@ private:
 
 public:
   // Constructor
-  Thesis(int id, string titulo, string genero, string autor, int year,
-         string editorial, string director);
+  Thesis(int id, string tipo, string titulo, string genero, string autor, int year, string editorial, string director);
   // Destructor
   ~Thesis();
   // Metodos
