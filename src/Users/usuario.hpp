@@ -1,8 +1,9 @@
 #ifndef USUARIO_HPP
 #define USUARIO_HPP
-#include "catalogo.hpp"
+
 #include <chrono>
 #include <string>
+
 using namespace std;
 
 class Usuario {
@@ -28,9 +29,11 @@ public:
   // Metodos
 };
 
-class Prestamo : public Usuario, public Item {
+class Prestamo {
 private:
   int id;
+  int idUsuario;
+  int idItem;
   chrono::system_clock::time_point fechaLimite;
   chrono::system_clock::time_point fechaInicio;
   chrono::system_clock::time_point fechaDevolucion;
@@ -38,6 +41,13 @@ private:
   bool devuelto;
 
 public:
+  // Constructor
+  Prestamo(int id, int idUsuario, int idItem, chrono::system_clock::time_point fechaInicio, chrono::system_clock::time_point fechaLimite, chrono::system_clock::time_point fechaDevolucion, int sancionAcumulada, bool devuelto);
+
+  // Destructor
+  ~Prestamo();
+
+  // Metodos
   void returnItem();
   void loanItem();
 
@@ -46,6 +56,8 @@ public:
   chrono::system_clock::time_point getFechaInicio() { return fechaInicio; }
   int getSancionAcumulada() { return sancionAcumulada; }
   int getIdPrestamo() { return id; }
+  int getIdUsuario() { return idUsuario; }
+  int getIdItem() { return idItem; }
   bool getDevuelto() { return devuelto; }
 };
 

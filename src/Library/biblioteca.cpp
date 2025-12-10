@@ -1,5 +1,8 @@
 #include "biblioteca.hpp"
-#include "usuario.hpp"
+#include "../Items/book.hpp"
+#include "../Items/journal.hpp"
+#include "../Items/thesis.hpp"
+#include "../Users/usuario.hpp"
 #include <algorithm>
 #include <chrono>
 #include <fstream>
@@ -32,13 +35,35 @@ string unescapeCSV(string campo) {
     return campo.substr(1, campo.size() - 2);
   }
   return campo;
-};
+}
+
+Biblioteca::Biblioteca() {
+  cargarUsuariosCSV("data/usuarios.csv");
+  cargarMaterialesCSV("data/catalogo.csv");
+  cargarPrestamosCSV("data/prestamos.csv");
+}
+
+Biblioteca::~Biblioteca() {
+  for (auto u : usuarios)
+    delete u;
+  for (auto i : items)
+    delete i;
+  for (auto p : prestamos)
+    delete p;
+  usuarios.clear();
+  items.clear();
+  prestamos.clear();
+}
 
 void Biblioteca::cargarUsuariosCSV(string ruta) {
   ifstream file(ruta);
+  if (!file.is_open()) {
+    cerr << "Error al abrir " << ruta << endl;
+    return;
+  }
 
   string linea;
-  getline(file, linea);
+  // No skipping header as file seems to have data on line 1
 
   while (getline(file, linea)) {
     auto campos = splitCSV(linea);
@@ -52,18 +77,16 @@ void Biblioteca::cargarUsuariosCSV(string ruta) {
     Usuario *u = new Usuario(id, nombre, rol, sancion, bloqueado);
     usuarios.push_back(u);
   }
-};
+}
 
 void Biblioteca::cargarMaterialesCSV(string ruta) {
-    ifstream file(ruta);
-    if (!file.is_open()) {
-        cerr << "Error al abrir " << ruta << endl;
-        return;
-    }
+  ifstream file(ruta);
+  if (!file.is_open()) {
+    cerr << "Error al abrir " << ruta << endl;
+    return;
+  }
 
-    string linea;
-    getline(file, linea); // Saltar cabecera
-
+  string linea;
   while (getline(file, linea)) {
     auto campos = splitCSV(linea);
 
@@ -72,21 +95,21 @@ void Biblioteca::cargarMaterialesCSV(string ruta) {
     string titulo = unescapeCSV(campos[2]);
     string autor = unescapeCSV(campos[3]);
     int year = stoi(campos[4]);
-    string genero    = unescapeCSV(campos[5]);
-    string editorial  = unescapeCSV(campos[6]);
+    string genero = unescapeCSV(campos[5]);
+    string editorial = unescapeCSV(campos[6]);
 
-    Item* i = nullptr;
+    Item *i = nullptr;
 
     if (tipo == "Book") {
       int isbn = stoi(campos[7]);
 
-      i = new Libro(id, tipo, titulo, genero, autor, year, editorial, isbn);
+      i = new Book(id, tipo, titulo, genero, autor, year, editorial, isbn);
     }
 
     else if (tipo == "Journal") {
       int issn = stoi(campos[7]);
 
-      i = new Revista(id, tipo, titulo, genero, autor, year, editorial, issn);
+      i = new Journal(id, tipo, titulo, genero, autor, year, editorial, issn);
     }
 
     else if (tipo == "Thesis") {
@@ -94,7 +117,6 @@ void Biblioteca::cargarMaterialesCSV(string ruta) {
 
       if (year < 1980) {
         cerr << "ERROR: Tesis con año < 1980. ID=" << id << endl;
-        continue;
       }
 
       i = new Thesis(id, tipo, titulo, genero, autor, year, editorial, director);
@@ -102,7 +124,6 @@ void Biblioteca::cargarMaterialesCSV(string ruta) {
 
     else {
       cerr << "Tipo de item desconocido: " << tipo << endl;
-      continue;
     }
 
     // Añadir al catálogo
@@ -111,36 +132,40 @@ void Biblioteca::cargarMaterialesCSV(string ruta) {
 };
 
 void Biblioteca::cargarPrestamosCSV(string ruta) {
-    ifstream file(ruta);
-    if (!file.is_open()) {
-        cerr << "Error al abrir " << ruta << endl;
-        return;
-    }
+  ifstream file(ruta);
+  if (!file.is_open()) {
+    cerr << "Error al abrir " << ruta << endl;
+    return;
+  }
 
-    string linea;
-    getline(file, linea); // Saltar cabecera
+  string linea;
+  getline(file, linea); // Saltar cabecera
 
-    while (getline(file, linea)) {
-        auto campos = splitCSV(linea);
+  while (getline(file, linea)) {
+    auto campos = splitCSV(linea);
 
-        int id = stoi(campos[0]);
-        int idUsuario = stoi(campos[1]);
-        int idItem = stoi(campos[2]);
-        chrono::system_clock::time_point fechaInicio =
-            chrono::system_clock::from_time_t(stoi(campos[3]));
-        chrono::system_clock::time_point fechaLimite =
-            chrono::system_clock::from_time_t(stoi(campos[4]));
-        chrono::system_clock::time_point fechaDevolucion =
-            chrono::system_clock::from_time_t(stoi(campos[5]));
-        int sancionAcumulada = stoi(campos[6]);
-        bool devuelto = (campos[7] == "true");
+    int id = stoi(campos[0]);
+    int idUsuario = stoi(campos[1]);
+    int idItem = stoi(campos[2]);
+    chrono::system_clock::time_point fechaInicio =
+        chrono::system_clock::from_time_t(stoi(campos[3]));
+    chrono::system_clock::time_point fechaLimite =
+        chrono::system_clock::from_time_t(stoi(campos[4]));
+    chrono::system_clock::time_point fechaDevolucion =
+        chrono::system_clock::from_time_t(stoi(campos[5]));
+    int sancionAcumulada = stoi(campos[6]);
+    bool devuelto = (campos[7] == "true");
 
-        Prestamo *p = new Prestamo(id, idUsuario, idItem, fechaInicio, fechaLimite, fechaDevolucion, sancionAcumulada, devuelto);
-        prestamos.push_back(p);
-    }
-}
+    Prestamo *p = new Prestamo(id, idUsuario, idItem, fechaInicio, fechaLimite,
+                               fechaDevolucion, sancionAcumulada, devuelto);
+    prestamos.push_back(p);
+  }
+};
 
-void Biblioteca::addItem(Item *item) { items.push_back(item); };
+void Biblioteca::addItem(Item *item) {
+  items.push_back(item);
+  cout << "Item añadido con exito" << item->info() << endl;
+};
 
 void Biblioteca::removeItem(Item *item) {
   items.erase(remove(items.begin(), items.end(), item), items.end());
@@ -163,14 +188,14 @@ void Biblioteca::removePrestamo(Prestamo *prestamo) {
 };
 
 // Politica de sanciones, A1
+/*
 void retrasoDevolucion(Prestamo *prestamo) {
   if (prestamo->getFechaDevolucion() > prestamo->getFechaLimite()) {
     cout << "El prestamo " << prestamo->getIdPrestamo() << "ha sido retrasado"
          << endl;
     chrono::system_clock::time_point diasRetrasados =
-        prestamo->getFechaDevolucion() - prestamo->getFechaLimite();
-    int dinero = diasRetrasados * 0.1; // Como operar y comparar chrono
-    if (dinero >= 15) {
+prestamo->getFechaDevolucion() - prestamo->getFechaLimite(); int dinero =
+diasRetrasados * 0.1; // Como operar y comparar chrono if (dinero >= 15) {
       dinero = 15;
     }
     cout << "El usuario debe pagar " << dinero << " por el retraso" << endl;
@@ -198,3 +223,4 @@ void restriccionPrestamo(Prestamo *prestamo) {
          << "con Id: " << prestamo->getIdUsuario() << endl;
   }
 };
+*/
