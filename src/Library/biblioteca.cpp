@@ -3,15 +3,18 @@
 #include "../Items/journal.hpp"
 #include "../Items/thesis.hpp"
 #include "../Users/usuario.hpp"
+#include "../catalog.hpp"
 #include <algorithm>
 #include <chrono>
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <sstream>
+#include <iomanip>
 
 using namespace std;
 
-vector<string> splitCSV(const string &linea) {
+vector<string> Biblioteca::splitCSV(const string &linea) {
   vector<string> campos;
   string campo;
   bool enComillas = false;
@@ -30,7 +33,7 @@ vector<string> splitCSV(const string &linea) {
   return campos;
 }
 
-string unescapeCSV(string campo) {
+string Biblioteca::unescapeCSV(string campo) {
   if (campo.size() >= 2 && campo.front() == '"' && campo.back() == '"') {
     return campo.substr(1, campo.size() - 2);
   }
@@ -39,20 +42,19 @@ string unescapeCSV(string campo) {
 
 Biblioteca::Biblioteca() {
   cargarUsuariosCSV("data/usuarios.csv");
-  cargarMaterialesCSV("data/catalogo.csv");
+  catalogo.cargarMaterialesCSV("data/catalogo.csv");
   cargarPrestamosCSV("data/prestamos.csv");
 }
 
 Biblioteca::~Biblioteca() {
   for (auto u : usuarios)
     delete u;
-  for (auto i : items)
-    delete i;
   for (auto p : prestamos)
     delete p;
+
   usuarios.clear();
-  items.clear();
   prestamos.clear();
+
 }
 
 void Biblioteca::cargarUsuariosCSV(string ruta) {
@@ -79,58 +81,6 @@ void Biblioteca::cargarUsuariosCSV(string ruta) {
   }
 }
 
-void Biblioteca::cargarMaterialesCSV(string ruta) {
-  ifstream file(ruta);
-  if (!file.is_open()) {
-    cerr << "Error al abrir " << ruta << endl;
-    return;
-  }
-
-  string linea;
-  while (getline(file, linea)) {
-    auto campos = splitCSV(linea);
-
-    int id = stoi(campos[0]);
-    string tipo = unescapeCSV(campos[1]);
-    string titulo = unescapeCSV(campos[2]);
-    string autor = unescapeCSV(campos[3]);
-    int year = stoi(campos[4]);
-    string genero = unescapeCSV(campos[5]);
-    string editorial = unescapeCSV(campos[6]);
-
-    Item *i = nullptr;
-
-    if (tipo == "Book") {
-      int isbn = stoi(campos[7]);
-
-      i = new Book(id, tipo, titulo, genero, autor, year, editorial, isbn);
-    }
-
-    else if (tipo == "Journal") {
-      int issn = stoi(campos[7]);
-
-      i = new Journal(id, tipo, titulo, genero, autor, year, editorial, issn);
-    }
-
-    else if (tipo == "Thesis") {
-      string director = unescapeCSV(campos[7]);
-
-      if (year < 1980) {
-        cerr << "ERROR: Tesis con año < 1980. ID=" << id << endl;
-      }
-
-      i = new Thesis(id, tipo, titulo, genero, autor, year, editorial, director);
-    }
-
-    else {
-      cerr << "Tipo de item desconocido: " << tipo << endl;
-    }
-
-    // Añadir al catálogo
-    items.push_back(i);
-  }
-};
-
 void Biblioteca::cargarPrestamosCSV(string ruta) {
   ifstream file(ruta);
   if (!file.is_open()) {
@@ -143,49 +93,65 @@ void Biblioteca::cargarPrestamosCSV(string ruta) {
 
   while (getline(file, linea)) {
     auto campos = splitCSV(linea);
+    auto safe = [&](size_t idx) -> string {
+      if (idx < campos.size())
+        return unescapeCSV(campos[idx]);
+      return string();
+    };
 
-    int id = stoi(campos[0]);
-    int idUsuario = stoi(campos[1]);
-    int idItem = stoi(campos[2]);
-    chrono::system_clock::time_point fechaInicio =
-        chrono::system_clock::from_time_t(stoi(campos[3]));
-    chrono::system_clock::time_point fechaLimite =
-        chrono::system_clock::from_time_t(stoi(campos[4]));
-    chrono::system_clock::time_point fechaDevolucion =
-        chrono::system_clock::from_time_t(stoi(campos[5]));
-    int sancionAcumulada = stoi(campos[6]);
-    bool devuelto = (campos[7] == "true");
+    auto parseDate = [&](const string &s) -> chrono::system_clock::time_point {
+      if (s.empty())
+        return chrono::system_clock::time_point();
+      std::tm tm = {};
+      std::istringstream ss(s);
+      ss >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S");
+      if (ss.fail())
+        return chrono::system_clock::time_point();
+      time_t tt = mktime(&tm);
+      return chrono::system_clock::from_time_t(tt);
+    };
 
-    Prestamo *p = new Prestamo(id, idUsuario, idItem, fechaInicio, fechaLimite,
-                               fechaDevolucion, sancionAcumulada, devuelto);
-    prestamos.push_back(p);
+    try {
+      int id = safe(0).empty() ? 0 : stoi(safe(0));
+      int idUsuario = safe(1).empty() ? 0 : stoi(safe(1));
+      int idItem = safe(2).empty() ? 0 : stoi(safe(2));
+
+      chrono::system_clock::time_point fechaInicio = parseDate(safe(3));
+      chrono::system_clock::time_point fechaLimite = parseDate(safe(4));
+      chrono::system_clock::time_point fechaDevolucion = parseDate(safe(5));
+
+      int sancionAcumulada = safe(6).empty() ? 0 : stoi(safe(6));
+      bool devuelto = (safe(7) == "true");
+
+      Prestamo *p = new Prestamo(id, idUsuario, idItem, fechaInicio, fechaLimite,
+                                 fechaDevolucion, sancionAcumulada, devuelto);
+      prestamos.push_back(p);
+    } catch (const std::exception &e) {
+      cerr << "Error parsing prestamos.csv linea: '" << linea << "' -> "
+           << e.what() << endl;
+    }
   }
-};
+}
 
-void Biblioteca::addItem(Item *item) {
-  items.push_back(item);
-  cout << "Item añadido con exito" << item->info() << endl;
-};
-
-void Biblioteca::removeItem(Item *item) {
-  items.erase(remove(items.begin(), items.end(), item), items.end());
-};
-
-void Biblioteca::addUsuario(Usuario *usuario) { usuarios.push_back(usuario); };
+void Biblioteca::addUsuario(Usuario *usuario) { usuarios.push_back(usuario); }
 
 void Biblioteca::removeUsuario(Usuario *usuario) {
   usuarios.erase(remove(usuarios.begin(), usuarios.end(), usuario),
                  usuarios.end());
-};
+}
 
 void Biblioteca::addPrestamo(Prestamo *prestamo) {
   prestamos.push_back(prestamo);
-};
+}
 
 void Biblioteca::removePrestamo(Prestamo *prestamo) {
   prestamos.erase(remove(prestamos.begin(), prestamos.end(), prestamo),
                   prestamos.end());
-};
+}
+
+Catalogo &Biblioteca::getCatalogo() {
+    return catalogo;
+}
 
 // Politica de sanciones, A1
 /*

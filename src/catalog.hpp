@@ -11,10 +11,14 @@ public:
     Catalogo() {}
     ~Catalogo() {}
 
+    void cargarMaterialesCSV(std::string ruta);
+
     void addItem(Item* item);
     void removeItem(Item* item);
-    void printCatalog();
 
-    vector<Item*> getItems();
+    void printCatalogo();
+
+    void removeItemPorLista(std::size_t index);
+
 };
 #endif

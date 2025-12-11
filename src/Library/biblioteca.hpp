@@ -3,20 +3,18 @@
 
 #include "../Items/item.hpp"
 #include "../Users/usuario.hpp"
+#include "../catalog.hpp"
 #include <vector>
+#include <string>
 
 using namespace std;
 
 class Biblioteca {
 private:
-  vector<Item *> items; // Was items in step 8, but step 47 showed only
-                        // usuarios/prestamos? Wait.
-  // Step 47 showed: vector<Usuario *> usuarios; vector<Prestamo *> prestamos;
-  // Step 8 (original) showed: vector<Item *> items; vector<Usuario *> usuarios;
-  // vector<Prestamo *> prestamos; Biblioteca needs items! addItem() takes
-  // Item*. I should define items vector.
   vector<Usuario *> usuarios;
   vector<Prestamo *> prestamos;
+
+  Catalogo catalogo;
 
 public:
   // Constructor
@@ -24,8 +22,7 @@ public:
   // Destructor
   ~Biblioteca();
   // Metodos
-  void addItem(Item *item);
-  void removeItem(Item *item);
+
   void addUsuario(Usuario *usuario);
   void removeUsuario(Usuario *usuario);
   void addPrestamo(Prestamo *prestamo);
@@ -33,17 +30,21 @@ public:
 
   // Metodos de datos
   void cargarUsuariosCSV(string ruta);
-  void cargarMaterialesCSV(string ruta);
   void cargarPrestamosCSV(string ruta);
+
+  static vector <string>splitCSV(const string &linea);
+  static string unescapeCSV(string campo);
 
   void cargarDatos() {
     cargarUsuariosCSV("data/usuarios.csv");
-    cargarMaterialesCSV("data/catalogo.csv");
+    catalogo.cargarMaterialesCSV("data/catalogo.csv");
     cargarPrestamosCSV("data/prestamos.csv");
   }
 
   void guardarUsuariosCSV(string ruta);
   void guardarMaterialesCSV(string ruta);
   void guardarPrestamosCSV(string ruta);
+  
+  Catalogo &getCatalogo();
 };
 #endif

@@ -17,8 +17,7 @@ protected:
 
 public:
   // Constructor
-  Item(int id, string tipo, string titulo, string autor, int year,
-       string genero, string editorial);
+  Item(int id, string tipo, string titulo, string autor, int year, string genero, string editorial);
 
   // Destructor virtual
   virtual ~Item();
@@ -27,13 +26,13 @@ public:
   virtual std::string info() const = 0;
 
   // Getters
-  int getId() { return id; }
-  string getTipo() { return tipo; }
-  string getTitulo() { return titulo; }
-  string getGenero() { return genero; }
-  string getAutor() { return autor; }
-  int getYear() { return year; }
-  string getEditorial() { return editorial; }
+  int getId();
+  string getTipo();
+  string getTitulo();
+  string getGenero();
+  string getAutor();
+  int getYear();
+  string getEditorial();
 };
 
 #endif

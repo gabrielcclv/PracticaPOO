@@ -8,26 +8,35 @@
 using namespace std;
 
 // Item Implementation
-Item::Item(int id, string tipo, string titulo, string autor, int year,
-           string genero, string editorial)
-    : id(id), tipo(tipo), titulo(titulo), autor(autor), year(year),
-      genero(genero), editorial(editorial) {}
+Item::Item(int id, string tipo, string titulo, string autor, int year, string genero, string editorial)
+    : id(id), tipo(tipo), titulo(titulo), autor(autor), year(year), genero(genero), editorial(editorial) {}
 
 Item::~Item() {}
 
-// Book Implementation
-std::string Book::info() const {
-  return "Book (ID: " + to_string(id) + "): " + titulo + " by " + autor;
+int Item::getId() {
+  return id;
 }
 
-void Book::printBook() { cout << info() << endl; }
-
-// Journal Implementation
-std::string Journal::info() const {
-  return "Journal (ID: " + to_string(id) + "): " + titulo + " by " + autor;
+string Item::getTipo() {
+  return tipo;
 }
 
-// Thesis Implementation
-std::string Thesis::info() const {
-  return "Thesis (ID: " + to_string(id) + "): " + titulo + " by " + autor;
+string Item::getTitulo() {
+  return titulo;
+}
+
+string Item::getGenero() {
+  return genero;
+}
+
+string Item::getAutor() {
+  return autor;
+}
+
+int Item::getYear() {
+  return year;
+}
+
+string Item::getEditorial() {
+  return editorial;
 }

@@ -1,7 +1,6 @@
 #ifndef JOURNAL_HPP
 #define JOURNAL_HPP
 
-#include <iostream>
 #include "item.hpp"
 
 class Journal : public Item {
@@ -14,7 +13,8 @@ public:
   ~Journal() {}
 
   std::string info() const;
+  void printJournal();
 
-  int getIssn() { return issn; }
+  int getIssn();
 };
 #endif

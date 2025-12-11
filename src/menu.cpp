@@ -1,0 +1,217 @@
+#include <iostream>
+#include "Library/biblioteca.hpp"
+#include "Items/book.hpp"
+#include "Items/journal.hpp"
+#include "Items/thesis.hpp"
+#include "menu.hpp"
+
+using namespace std;
+
+void addBook(Biblioteca &biblio) {
+    int id, year, isbn;
+    string titulo, autor, genero, editorial;
+
+    cout << "Ingrese el ID: ";
+    cin >> id;
+    cout << "Ingrese el titulo: ";
+    cin >> titulo;
+    cout << "Ingrese el autor: ";
+    cin >> autor;
+    cout << "Ingrese el año: ";
+    cin >> year;
+    cout << "Ingrese el genero: ";
+    cin >> genero;
+    cout << "Ingrese la editorial: ";
+    cin >> editorial;
+    cout << "Ingrese el isbn: ";
+    cin >> isbn;
+    string tipo = "Libro";
+
+    Item *newItem =
+        new Book(id, tipo, titulo, genero, autor, year, editorial, isbn);
+    biblio.getCatalogo().addItem(newItem);
+}
+void addJournal(Biblioteca &biblio) {
+    int id, year, issn;
+    string titulo, autor, genero, editorial;
+    
+    cout << "Ingrese el ID: ";
+    cin >> id;
+    cout << "Ingrese el titulo: ";
+    cin >> titulo;
+    cout << "Ingrese el autor: ";
+    cin >> autor;
+    cout << "Ingrese el año: ";
+    cin >> year;
+    cout << "Ingrese el genero: ";
+    cin >> genero;
+    cout << "Ingrese la editorial: ";
+    cin >> editorial;
+    cout << "Ingrese el issn: ";
+    cin >> issn;
+    string tipo = "Revista";
+
+    Item *newItem =
+        new Journal(id, tipo, titulo, genero, autor, year, editorial, issn);
+    biblio.getCatalogo().addItem(newItem);
+}
+
+void addThesis(Biblioteca &biblio) {
+    int id, year;
+    string titulo, autor, genero, editorial, director;
+
+    cout << "Ingrese el ID: ";
+    cin >> id;
+    cout << "Ingrese el titulo: ";
+    cin >> titulo;
+    cout << "Ingrese el autor: ";
+    cin >> autor;
+    cout << "Ingrese el año: ";
+    cin >> year;
+    cout << "Ingrese el genero: ";
+    cin >> genero;
+    cout << "Ingrese la editorial: ";
+    cin >> editorial;
+    cout << "Ingrese el director: ";
+    cin >> director;
+    string tipo = "Tesis";
+
+    Item *newItem =
+        new Thesis(id, tipo, titulo, genero, autor, year, editorial, director);
+    biblio.getCatalogo().addItem(newItem);
+}
+
+
+
+void Menu(Biblioteca &biblio) {
+
+  cout << "Menu" << endl;
+  cout << "1. Add/Remove/Edit-item" << endl;
+  cout << "2. Add-user/Block-user/Unblock-user" << endl;
+  cout << "3. Loan/Return" << endl;
+  cout << "4. Search/List" << endl;
+  cout << "5. Report" << endl;
+  cout << "6. Exit" << endl;
+
+  int opcion;
+  cout << "Ingrese una opcion: ";
+  cin >> opcion;
+
+  switch (opcion) {
+  case 1: {
+    cout << "1. Add Item" << endl;
+    cout << "2. AAAARemove Item" << endl;
+    cout << "3. Edit Item" << endl;
+
+    int opcion2;
+    cout << "Ingrese una opcion: ";
+    cin >> opcion2;
+
+    switch (opcion2) {
+    case 1: { // Add Item
+      int opcion3;
+      cout << "1. Add Book" << endl;
+      cout << "2. Add Journal" << endl;
+      cout << "3. Add Thesis" << endl;
+      cout << "Ingrese una opcion: ";
+      cin >> opcion3;
+      switch (opcion3) {
+      case 1: {
+        addBook(biblio);
+      } break;
+      case 2: {
+        addJournal(biblio);
+      } break;
+      case 3: {
+        addThesis(biblio);
+      } break;
+      default:
+        cout << "Opcion invalida" << endl;
+        break;
+      }
+      break;
+    }
+    case 2:{  // Remove Item
+        biblio.Biblioteca::getCatalogo().printCatalogo();
+        size_t i;
+        cout << "Ingrese el numero del item a eliminar: ";
+        cin >> i;
+        biblio.Biblioteca::getCatalogo().removeItemPorLista(i);
+    }  break;
+    case 3: // Edit Item
+      break;
+    default:
+      cout << "Opcion invalida" << endl;
+      break;
+    }
+    break;
+  }
+  case 2: {
+    cout << "1. Add User" << endl;
+    cout << "2. Block User" << endl;
+    cout << "3. Unblock User" << endl;
+
+    int opcion2;
+    cout << "Ingrese una opcion: ";
+    cin >> opcion2;
+
+    switch (opcion2) {
+    case 1:
+      break;
+    case 2:
+      break;
+    case 3:
+      break;
+    default:
+      cout << "Opcion invalida" << endl;
+      break;
+    }
+    break;
+  }
+  case 3: {
+    cout << "1. Loan" << endl;
+    cout << "2. Return" << endl;
+
+    int opcion2;
+    cout << "Ingrese una opcion: ";
+    cin >> opcion2;
+
+    switch (opcion2) {
+    case 1:
+      break;
+    case 2:
+      break;
+    default:
+      cout << "Opcion invalida" << endl;
+      break;
+    }
+    break;
+  }
+  case 4: {
+    cout << "1. Search" << endl;
+    cout << "2. List" << endl;
+
+    int opcion2;
+    cout << "Ingrese una opcion: ";
+    cin >> opcion2;
+
+    switch (opcion2) {
+    case 1:
+      break;
+    case 2:
+      break;
+    default:
+      cout << "Opcion invalida" << endl;
+      break;
+    }
+    break;
+  }
+  case 5:
+    break;
+  case 6:
+    break;
+  default:
+    cout << "Opcion invalida" << endl;
+    break;
+  }
+}
