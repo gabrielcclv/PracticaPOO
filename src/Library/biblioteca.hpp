@@ -23,8 +23,8 @@ public:
   ~Biblioteca();
   // Metodos
 
-  void addUsuario(Usuario *usuario);
-  void removeUsuario(Usuario *usuario);
+  void addUser(Usuario *usuario);
+  void removeUser(Usuario *usuario);
   void addPrestamo(Prestamo *prestamo);
   void removePrestamo(Prestamo *prestamo);
 
@@ -46,5 +46,9 @@ public:
   void guardarPrestamosCSV(string ruta);
   
   Catalogo &getCatalogo();
+  vector<Usuario *> &getUsuarios();
+  vector<Prestamo *> &getPrestamos();
+
+  void printUsuarios();
 };
 #endif

@@ -133,11 +133,12 @@ void Biblioteca::cargarPrestamosCSV(string ruta) {
   }
 }
 
-void Biblioteca::addUsuario(Usuario *usuario) { usuarios.push_back(usuario); }
+void Biblioteca::addUser(Usuario *usuario) { 
+  usuarios.push_back(usuario); 
+}
 
-void Biblioteca::removeUsuario(Usuario *usuario) {
-  usuarios.erase(remove(usuarios.begin(), usuarios.end(), usuario),
-                 usuarios.end());
+void Biblioteca::removeUser(Usuario *usuario) {
+  usuarios.erase(remove(usuarios.begin(), usuarios.end(), usuario), usuarios.end());
 }
 
 void Biblioteca::addPrestamo(Prestamo *prestamo) {
@@ -145,12 +146,26 @@ void Biblioteca::addPrestamo(Prestamo *prestamo) {
 }
 
 void Biblioteca::removePrestamo(Prestamo *prestamo) {
-  prestamos.erase(remove(prestamos.begin(), prestamos.end(), prestamo),
-                  prestamos.end());
+  prestamos.erase(remove(prestamos.begin(), prestamos.end(), prestamo), prestamos.end());
 }
 
 Catalogo &Biblioteca::getCatalogo() {
     return catalogo;
+}
+
+vector<Usuario *> &Biblioteca::getUsuarios() {
+    return usuarios;
+}
+
+vector<Prestamo *> &Biblioteca::getPrestamos() {
+    return prestamos;
+}
+
+void Biblioteca::printUsuarios(){
+  for(size_t i = 0; i < usuarios.size(); i++){
+    Usuario* u = usuarios[i];
+    cout << i << ". " << u->getNombre() << endl;
+  }
 }
 
 // Politica de sanciones, A1

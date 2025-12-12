@@ -3,7 +3,7 @@
 
 #include "Library/biblioteca.hpp"
 
-// 1era opcion de menu, añadir
+// 1era opcion de menu, añadir simplemente texto
 void addBook(Biblioteca &biblio);
 void addJournal(Biblioteca &biblio);
 void addThesis(Biblioteca &biblio);

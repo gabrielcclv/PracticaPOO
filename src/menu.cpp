@@ -100,7 +100,7 @@ void Menu(Biblioteca &biblio) {
   switch (opcion) {
   case 1: {
     cout << "1. Add Item" << endl;
-    cout << "2. AAAARemove Item" << endl;
+    cout << "2. Remove Item" << endl;
     cout << "3. Edit Item" << endl;
 
     int opcion2;
@@ -138,7 +138,13 @@ void Menu(Biblioteca &biblio) {
         cin >> i;
         biblio.Biblioteca::getCatalogo().removeItemPorLista(i);
     }  break;
-    case 3: // Edit Item
+    case 3:{ // Edit Item
+        biblio.Biblioteca::getCatalogo().printCatalogo();
+        size_t i;
+        cout << "Ingrese el numero del item a editar: ";
+        cin >> i;
+        biblio.Biblioteca::getCatalogo().editItemPorLista(i);
+    }
       break;
     default:
       cout << "Opcion invalida" << endl;
@@ -156,11 +162,42 @@ void Menu(Biblioteca &biblio) {
     cin >> opcion2;
 
     switch (opcion2) {
-    case 1:
+    case 1: { //Add User
+        string nombre, rol;
+        int id;
+
+        cout << "Nombre del usuario: ";
+        cin >> nombre;
+        cout << "Rol del usuario: ";
+        cin >> rol;
+        cout << "ID del usuario: ";
+        cin >> id;
+
+        Usuario* nuevoUsuario = new Usuario(id, nombre, rol, 0.0, false);
+        biblio.addUser(nuevoUsuario);
+    }
       break;
-    case 2:
+    case 2: { // Block User
+        cout << "Usuarios: " << endl;
+        biblio.printUsuarios();
+        size_t i;
+        cout << "Ingrese el numero del usuario a bloquear: ";
+        cin >> i;
+        Usuario* u = biblio.getUsuarios()[i];
+        u->blockUser();
+        cout << "Usuario bloqueado." << endl;
+    }
       break;
-    case 3:
+    case 3:{ // Unblock User
+        cout << "Usuarios: " << endl;
+        biblio.printUsuarios();
+        size_t i;
+        cout << "Ingrese el numero del usuario a desbloquear: ";
+        cin >> i;
+        Usuario* u = biblio.getUsuarios()[i];
+        u->unblockUser();
+        cout << "Usuario desbloqueado." << endl;
+    }
       break;
     default:
       cout << "Opcion invalida" << endl;
@@ -206,9 +243,10 @@ void Menu(Biblioteca &biblio) {
     }
     break;
   }
-  case 5:
+  case 5: // Report
     break;
-  case 6:
+  case 6: // Exit
+    cout << "Saliendo del programa..." << endl;
     break;
   default:
     cout << "Opcion invalida" << endl;

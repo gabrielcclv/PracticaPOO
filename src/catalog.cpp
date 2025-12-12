@@ -96,3 +96,67 @@ void Catalogo::removeItemPorLista(size_t i) {
     delete item;
     cout << "Item eliminado." << endl;
 }
+
+void Catalogo::editItemPorLista(std::size_t index) {
+    if (index >= items.size()) {
+        cout << "Indice fuera de rango: " << index << endl;
+        return;
+    }
+    cout << "Que campo desea editar?" << endl; 
+    cout << "1. Titulo" << endl;
+    cout << "2. Autor" << endl;
+    cout << "3. Genero" << endl;
+    cout << "4. Año" << endl;
+    cout << "5. Editorial" << endl;
+    int opcion;
+    cout << "Ingrese una opcion: ";
+    cin >> opcion;
+
+    Item* item = items[index];
+
+    switch (opcion) {
+        case 1: {
+            string nuevoTitulo;
+            cout << "Ingrese el nuevo titulo: ";
+            cin.ignore();
+            getline(cin, nuevoTitulo);
+            item->Item::setTitulo() = nuevoTitulo;
+            break;
+        }
+        case 2: {
+            string nuevoAutor;
+            cout << "Ingrese el nuevo autor: ";
+            cin.ignore();
+            getline(cin, nuevoAutor);
+            item->Item::setAutor() = nuevoAutor;
+            break;
+        }
+        case 3: {
+            string nuevoGenero;
+            cout << "Ingrese el nuevo genero: ";
+            cin.ignore();
+            getline(cin, nuevoGenero);
+            item->Item::setGenero() = nuevoGenero;
+            break;
+        }
+        case 4: {
+            int nuevoYear;
+            cout << "Ingrese el nuevo año: ";
+            cin >> nuevoYear;
+            item->Item::setYear() = nuevoYear;
+            break;
+        }
+        case 5: {
+            string nuevaEditorial;
+            cout << "Ingrese la nueva editorial: ";
+            cin.ignore();
+            getline(cin, nuevaEditorial);
+            item->Item::setEditorial() = nuevaEditorial;
+            break;
+        }
+        default:
+            cout << "Opcion invalida" << endl;
+            return;
+    }
+    cout << "Item editado." << endl;
+}

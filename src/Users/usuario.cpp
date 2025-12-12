@@ -9,14 +9,8 @@ Usuario::Usuario(int id, string nombre, string rol, double sancion,
 Usuario::~Usuario() {}
 
 // Prestamo Implementation
-Prestamo::Prestamo(int id, int idUsuario, int idItem,
-                   chrono::system_clock::time_point fechaInicio,
-                   chrono::system_clock::time_point fechaLimite,
-                   chrono::system_clock::time_point fechaDevolucion,
-                   int sancionAcumulada, bool devuelto)
-    : id(id), idUsuario(idUsuario), idItem(idItem), fechaInicio(fechaInicio),
-      fechaLimite(fechaLimite), fechaDevolucion(fechaDevolucion),
-      sancionAcumulada(sancionAcumulada), devuelto(devuelto) {}
+Prestamo::Prestamo(int id, int idUsuario, int idItem, chrono::system_clock::time_point fechaInicio, chrono::system_clock::time_point fechaLimite, chrono::system_clock::time_point fechaDevolucion, int sancionAcumulada, bool devuelto)
+    : id(id), idUsuario(idUsuario), idItem(idItem), fechaInicio(fechaInicio), fechaLimite(fechaLimite), fechaDevolucion(fechaDevolucion), sancionAcumulada(sancionAcumulada), devuelto(devuelto) {}
 
 Prestamo::~Prestamo() {}
 
@@ -26,8 +20,22 @@ void Prestamo::returnItem() {
   fechaDevolucion = chrono::system_clock::now();
 }
 
-void Prestamo::loanItem() {
-  // Basic implementation
-  devuelto = false;
-  fechaInicio = chrono::system_clock::now();
+int Usuario::getIdUsuario() {
+  return id;
+}
+
+string Usuario::getNombre() {
+  return nombre;
+}
+
+string Usuario::getRol() {
+  return rol;
+}
+
+void Usuario::blockUser() {
+    bloqueado = true;
+}
+
+void Usuario::unblockUser() {
+    bloqueado = false;
 }

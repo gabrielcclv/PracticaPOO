@@ -9,8 +9,6 @@ string Book::info() const {
          ", Editorial: " + editorial + ", ISBN: " + to_string(isbn);
 }
 
-void Book::printBook() { cout << info() << endl; }
-
 int Book::getIsbn() { return isbn; }
 
 void Book::setIsbn(int isbn) { this->isbn = isbn; }

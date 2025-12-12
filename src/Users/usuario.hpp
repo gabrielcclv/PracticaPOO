@@ -22,11 +22,15 @@ public:
   ~Usuario();
 
   // Atributos
-  int getIdUsuario() { return id; }
-  string getNombre() { return nombre; }
-  string getRol() { return rol; }
+  int getIdUsuario();
+  string getNombre();
+  string getRol();
 
   // Metodos
+  void blockUser();
+  void unblockUser();
+  void blockUserPorLista();
+  void unblockUserPorLista();
 };
 
 class Prestamo {

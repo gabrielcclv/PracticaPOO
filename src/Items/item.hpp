@@ -33,6 +33,14 @@ public:
   string getAutor();
   int getYear();
   string getEditorial();
+
+  // Setters
+  string& setTitulo();
+  int &setYear();
+  string& setAutor();
+  string& setGenero();
+  string& setEditorial();
+  
 };
 
 #endif

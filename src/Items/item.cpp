@@ -40,3 +40,24 @@ int Item::getYear() {
 string Item::getEditorial() {
   return editorial;
 }
+
+// Setters
+string& Item::setTitulo() {
+  return titulo;
+}
+
+int &Item::setYear() {
+  return year;
+}
+
+string& Item::setAutor() {
+  return autor;
+}
+
+string& Item::setGenero() {
+  return genero;
+}
+
+string& Item::setEditorial() {
+  return editorial;
+}

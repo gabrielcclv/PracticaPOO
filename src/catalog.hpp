@@ -15,6 +15,7 @@ public:
 
     void addItem(Item* item);
     void removeItem(Item* item);
+    void editItemPorLista(std::size_t index);
 
     void printCatalogo();
 
