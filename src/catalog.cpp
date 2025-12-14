@@ -89,7 +89,7 @@ void Catalogo::removeItemPorLista(size_t i) {
         cout << "Índice fuera de rango: " << i << endl;
         return;
     }
-    Item* item = items[i];
+    Item* item = items[i]; // Obtener el puntero al item
 
     removeItem(item);
 
@@ -114,7 +114,7 @@ void Catalogo::editItemPorLista(std::size_t index) {
 
     Item* item = items[index];
 
-    switch (opcion) {
+    switch (opcion) { // Opciones de edicion
         case 1: {
             string nuevoTitulo;
             cout << "Ingrese el nuevo titulo: ";
@@ -171,4 +171,56 @@ Item* Catalogo::getItemById(int id){
     } else {
         return nullptr;
     }
+}
+
+vector<Item*>& Catalogo::getItems(){
+    return items;
+}
+
+vector<Item*> Catalogo::buscarPorTitulo(string busqueda){
+    vector<Item*> resultados;
+    
+    // Usamos copy_if para llenar el vector 'resultados'
+    copy_if(items.begin(), items.end(), back_inserter(resultados), [busqueda](Item* i) {
+
+            return i->getTitulo().find(busqueda) != string::npos;
+        });
+
+    return resultados;
+}
+
+void Catalogo::printListaItems(const vector<Item*>& lista) {
+    if (lista.empty()) {
+        cout << "No se encontraron items." << endl;
+        return;
+    }
+
+    cout << "---------------- RESULTADOS (" << lista.size() << ") ----------------" << endl;
+    for (size_t i = 0; i < lista.size(); ++i) {
+        Item* it = lista[i];
+        if (it) {
+            // Sacamos info de cada item que esté en la lista
+            cout << "[" << i << "] " << it->getTitulo() 
+                 << " | Autor: " << it->getAutor() 
+                 << " | Anio: " << it->getYear() << endl;
+        }
+    }
+    cout << "------------------------------------------------" << endl;
+}
+
+vector<Item*> Catalogo::buscarAutorOrdenado(string autorBuscado) {
+    vector<Item*> resultados;
+
+    // Copy if para llenar el vector 'resultados' con items que coincidan el autor con el texto buscado
+    copy_if(items.begin(), items.end(), back_inserter(resultados), [autorBuscado](Item* i) {
+            // Buscar si el autor contiene el texto
+            return i->getAutor().find(autorBuscado) != string::npos;
+        });
+
+    // Ordenar los resultados por título
+    sort(resultados.begin(), resultados.end(), [](Item* a, Item* b) {
+        return a->getTitulo() < b->getTitulo();
+    });
+
+    return resultados;
 }

@@ -16,7 +16,7 @@ private:
   chrono::system_clock::time_point fechaDevolucion;
   int sancionAcumulada;
   bool devuelto;
-  Usuario* usuario;
+
 public:
   // Constructor
   Prestamo(int id, int idUsuario, int idItem, chrono::system_clock::time_point fechaInicio, chrono::system_clock::time_point fechaLimite, chrono::system_clock::time_point fechaDevolucion, int sancionAcumulada, bool devuelto);

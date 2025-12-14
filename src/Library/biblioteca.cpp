@@ -15,6 +15,7 @@
 
 using namespace std;
 
+// Divide una linea CSV en campos individuales
 vector<string> Biblioteca::splitCSV(const string &linea) {
   vector<string> campos;
   string campo;
@@ -34,6 +35,7 @@ vector<string> Biblioteca::splitCSV(const string &linea) {
   return campos;
 }
 
+// Elimina comillas de un campo CSV si existen
 string Biblioteca::unescapeCSV(string campo) {
   if (campo.size() >= 2 && campo.front() == '"' && campo.back() == '"') {
     return campo.substr(1, campo.size() - 2);
@@ -41,11 +43,7 @@ string Biblioteca::unescapeCSV(string campo) {
   return campo;
 }
 
-Biblioteca::Biblioteca() {
-  cargarUsuariosCSV("data/usuarios.csv");
-  catalogo.cargarMaterialesCSV("data/catalogo.csv");
-  cargarPrestamosCSV("data/prestamos.csv");
-}
+Biblioteca::Biblioteca() {}
 
 Biblioteca::~Biblioteca() {
   for (auto u : usuarios)
@@ -66,7 +64,6 @@ void Biblioteca::cargarUsuariosCSV(string ruta) {
   }
 
   string linea;
-  // No skipping header as file seems to have data on line 1
 
   while (getline(file, linea)) {
     auto campos = splitCSV(linea);
@@ -266,40 +263,82 @@ void Biblioteca::returnItem(int idUsuario, int idItem){
 
 }
 
-// Politica de sanciones, A1
-/*
-void retrasoDevolucion(Prestamo *prestamo) {
-  if (prestamo->getFechaDevolucion() > prestamo->getFechaLimite()) {
-    cout << "El prestamo " << prestamo->getIdPrestamo() << "ha sido retrasado"
-         << endl;
-    chrono::system_clock::time_point diasRetrasados =
-prestamo->getFechaDevolucion() - prestamo->getFechaLimite(); int dinero =
-diasRetrasados * 0.1; // Como operar y comparar chrono if (dinero >= 15) {
-      dinero = 15;
-    }
-    cout << "El usuario debe pagar " << dinero << " por el retraso" << endl;
-    bool pagar;
-    cout << "Desea pagar la sancion? (s/n): ";
-    cin >> pagar;
-    if (pagar) {
-      cout << "El usuario ha pagado la sancion" << endl;
-      removePrestamo(prestamo);
-    } else {
-      cout << "El usuario no ha pagado la sancion" << endl;
-      dinero += prestamo->getSancionAcumulada(dinero);
-    }
-  } else {
-    cout << "El prestamo " << prestamo->getIdPrestamo()
-         << "ha sido devuelto con éxito" << endl;
-    removePrestamo(prestamo);
-  }
-};
+Usuario* Biblioteca::getUsuarioById(int idUsuario) {
+    auto it = find_if(usuarios.begin(), usuarios.end(), [idUsuario](Usuario* u) {
+        return u->getIdUsuario() == idUsuario;
+    });
 
-// Restricciones de prestamos, C3
-void restriccionPrestamo(Prestamo *prestamo) {
-  if (prestamo->getSancionAcumulada() >= 10) {
-    cout << "El usuario " << prestamo->getNombre() << "ha sido restringido"
-         << "con Id: " << prestamo->getIdUsuario() << endl;
-  }
-};
-*/
+    if (it != usuarios.end()) {
+        return *it;
+    } else {
+        return nullptr;
+    }
+}
+
+void Biblioteca::generarReportePorRol() {
+    // 1. Inicializar contadores para los 3 roles
+    // Estructura: [0]=Estudiante, [1]=PDI, [2]=PAS
+    int activos[3] = {0, 0, 0};
+    int retrasos[3] = {0, 0, 0};
+    double sanciones[3] = {0.0, 0.0, 0.0};
+
+    auto ahora = chrono::system_clock::now();
+
+    // 2. Procesar PRÉSTAMOS (Activos y Retrasos)
+    // Asumimos que tienes un vector<Prestamo*> prestamos; en Biblioteca
+    for (Prestamo* p : prestamos) {
+        if (!p->getDevuelto()) {
+            // Buscar el rol del usuario dueño del préstamo
+            // Nota: Esto sería más rápido con un mapa de ID->Usuario, 
+            // pero lo haremos con búsqueda lineal simple por ahora.
+            Usuario* u = getUsuarioById(p->getIdUsuario()); 
+            
+            if (u) {
+                int index = -1;
+                string rol = u->getRol();
+                
+                if (rol == "Estudiante") index = 0;
+                else if (rol == "PDI") index = 1;
+                else if (rol == "PAS") index = 2;
+
+                if (index != -1) {
+                    // Contar préstamo activo
+                    activos[index]++;
+
+                    // Verificar retraso (si fecha limite < ahora)
+                    if (p->getFechaLimite() < ahora) {
+                        retrasos[index]++;
+                    }
+                }
+            }
+        }
+    }
+
+    // 3. Procesar USUARIOS (Sanciones acumuladas)
+    // Asumimos vector<Usuario*> usuarios;
+    for (Usuario* u : usuarios) {
+        int index = -1;
+        string rol = u->getRol();
+
+        if (rol == "Estudiante") index = 0;
+        else if (rol == "PDI") index = 1;
+        else if (rol == "PAS") index = 2;
+
+        if (index != -1) {
+            sanciones[index] += u->getSancion();
+        }
+    }
+    
+    // 4. Imprimir el reporte
+    cout << "----- Reporte de Prestamos por Rol -----" << endl;
+    cout << "Rol       | Activos | Retrasos | Sanciones Acumuladas" << endl;
+    cout << "-----------------------------------------" << endl;
+    string roles[3] = {"Estudiante", "PDI", "PAS"};
+    for (int i = 0; i < 3; ++i) {
+        cout << setw(10) << roles[i] << " | "
+             << setw(7) << activos[i] << " | "
+             << setw(8) << retrasos[i] << " | "
+             << setw(20) << fixed << setprecision(2) << sanciones[i] << " euros" << endl;
+    }
+    cout << "-----------------------------------------" << endl;
+}

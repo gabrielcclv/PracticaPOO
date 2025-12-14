@@ -14,7 +14,6 @@ class Biblioteca {
 private:
   vector<Usuario *> usuarios;
   vector<Prestamo *> prestamos;
-
   Catalogo catalogo;
 
 public:
@@ -49,10 +48,13 @@ public:
   Catalogo &getCatalogo();
   vector<Usuario *> &getUsuarios();
   vector<Prestamo *> &getPrestamos();
+  Usuario* getUsuarioById(int id);
 
   void printUsuarios();
 
   void loanItem(int idUsuario, int idItem);
   void returnItem(int idUsuario, int idItem);
+
+  void generarReportePorRol();
 };
 #endif

@@ -87,7 +87,10 @@ void addThesis(Biblioteca &biblio) {
 
 void Menu(Biblioteca &biblio) {
 
-  cout << "Menu" << endl;
+bool salir = false;
+do {
+
+  cout << "========== Biblioteca Universitaria ========== " << endl;
   cout << "1. Add/Remove/Edit-item" << endl;
   cout << "2. Add-user/Block-user/Unblock-user" << endl;
   cout << "3. Loan/Return" << endl;
@@ -101,6 +104,8 @@ void Menu(Biblioteca &biblio) {
 
   switch (opcion) {
   case 1: {
+    system("cls");
+
     cout << "1. Add Item" << endl;
     cout << "2. Remove Item" << endl;
     cout << "3. Edit Item" << endl;
@@ -111,6 +116,8 @@ void Menu(Biblioteca &biblio) {
 
     switch (opcion2) {
     case 1: { // Add Item
+        system("cls");
+
       int opcion3;
       cout << "1. Add Book" << endl;
       cout << "2. Add Journal" << endl;
@@ -119,12 +126,15 @@ void Menu(Biblioteca &biblio) {
       cin >> opcion3;
       switch (opcion3) {
       case 1: {
+        system("cls");
         addBook(biblio);
       } break;
       case 2: {
+        system("cls");
         addJournal(biblio);
       } break;
       case 3: {
+        system("cls");
         addThesis(biblio);
       } break;
       default:
@@ -134,6 +144,8 @@ void Menu(Biblioteca &biblio) {
       break;
     }
     case 2:{  // Remove Item
+        system("cls");
+
         biblio.Biblioteca::getCatalogo().printCatalogo();
         size_t i;
         cout << "Ingrese el numero del item a eliminar: ";
@@ -141,6 +153,8 @@ void Menu(Biblioteca &biblio) {
         biblio.Biblioteca::getCatalogo().removeItemPorLista(i);
     }  break;
     case 3:{ // Edit Item
+        system("cls");
+
         biblio.Biblioteca::getCatalogo().printCatalogo();
         size_t i;
         cout << "Ingrese el numero del item a editar: ";
@@ -155,6 +169,8 @@ void Menu(Biblioteca &biblio) {
     break;
   }
   case 2: {
+    system("cls");
+
     cout << "1. Add User" << endl;
     cout << "2. Block User" << endl;
     cout << "3. Unblock User" << endl;
@@ -165,6 +181,7 @@ void Menu(Biblioteca &biblio) {
 
     switch (opcion2) {
     case 1: { //Add User
+        system("cls");
         string nombre, rol;
         int id;
 
@@ -180,6 +197,7 @@ void Menu(Biblioteca &biblio) {
     }
       break;
     case 2: { // Block User
+        system("cls");
         cout << "Usuarios: " << endl;
         biblio.printUsuarios();
         size_t i;
@@ -191,6 +209,7 @@ void Menu(Biblioteca &biblio) {
     }
       break;
     case 3:{ // Unblock User
+        system("cls");
         cout << "Usuarios: " << endl;
         biblio.printUsuarios();
         size_t i;
@@ -208,6 +227,7 @@ void Menu(Biblioteca &biblio) {
     break;
   }
   case 3: {
+    system("cls");
     cout << "1. Loan" << endl;
     cout << "2. Return" << endl;
 
@@ -217,6 +237,7 @@ void Menu(Biblioteca &biblio) {
 
     switch (opcion2) {
     case 1:
+    system("cls");
     int idUsuario, idItem;
     
       cout << "ID del item: ";
@@ -225,8 +246,18 @@ void Menu(Biblioteca &biblio) {
       cin >> idUsuario;
     
       biblio.loanItem(idUsuario, idItem);
+      cout << "Prestamo realizado." << endl;
       break;
     case 2:
+    system("cls");
+
+        cout << "ID del item: ";
+        cin >> idItem;
+        cout << "ID del usuario: ";
+        cin >> idUsuario;
+
+        biblio.returnItem(idUsuario, idItem);
+        cout << "Devolucion realizada." << endl;
       break;
     default:
       cout << "Opcion invalida" << endl;
@@ -235,6 +266,7 @@ void Menu(Biblioteca &biblio) {
     break;
   }
   case 4: {
+    system("cls");
     cout << "1. Search" << endl;
     cout << "2. List" << endl;
 
@@ -243,9 +275,26 @@ void Menu(Biblioteca &biblio) {
     cin >> opcion2;
 
     switch (opcion2) {
-    case 1:
+    case 1:{ // Search
+        system("cls");
+        string autorBuscado;
+        cout << "Ingrese el autor a buscar: ";
+        cin.ignore();
+        getline(cin, autorBuscado);
+
+        vector<Item*> resultados = biblio.getCatalogo().buscarAutorOrdenado(autorBuscado);
+
+        if(resultados.empty()) {
+            cout << "No se encontraron items para el autor: " << autorBuscado << endl;
+        } else {
+            biblio.getCatalogo().printListaItems(resultados);
+        }
+    }
       break;
-    case 2:
+    case 2:{ // List
+        system("cls");
+        biblio.getCatalogo().printCatalogo();
+    }
       break;
     default:
       cout << "Opcion invalida" << endl;
@@ -254,12 +303,18 @@ void Menu(Biblioteca &biblio) {
     break;
   }
   case 5: // Report
+  system("cls");
+    biblio.generarReportePorRol();
     break;
   case 6: // Exit
+  system("cls");
+  salir = true;
     cout << "Saliendo del programa..." << endl;
+
     break;
   default:
     cout << "Opcion invalida" << endl;
     break;
   }
+}while (!salir);
 }
