@@ -96,20 +96,20 @@ void Biblioteca::cargarPrestamosCSV(string ruta) {
         return unescapeCSV(campos[idx]);
       return string();
     };
-
+    // Función para convertir string a time_point
     auto parseDate = [&](const string &s) -> chrono::system_clock::time_point {
       if (s.empty())
         return chrono::system_clock::time_point();
-      std::tm tm = {};
-      std::istringstream ss(s);
-      ss >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S");
+      tm tm = {};
+      istringstream ss(s);
+      ss >> get_time(&tm, "%Y-%m-%d %H:%M:%S");
       if (ss.fail())
         return chrono::system_clock::time_point();
       time_t tt = mktime(&tm);
       return chrono::system_clock::from_time_t(tt);
     };
 
-    try {
+    try { // Parsear campos con seguridad
       int id = safe(0).empty() ? 0 : stoi(safe(0));
       int idUsuario = safe(1).empty() ? 0 : stoi(safe(1));
       int idItem = safe(2).empty() ? 0 : stoi(safe(2));
@@ -244,7 +244,7 @@ void Biblioteca::returnItem(int idUsuario, int idItem){
         cout << "Item devuelto con " << diasRetraso << " dias de retraso." << endl;
         cout << "Sancion aplicada: " << multa << " euros." << endl;
 
-        // 4. Buscar al usuario para cobrarle la multa
+        // Buscar al usuario para cobrarle la multa
         int idUsuario = prestamo->getIdUsuario();
         auto itUsuario = find_if(usuarios.begin(), usuarios.end(), [idUsuario](Usuario* u) { 
           return u->getIdUsuario() == idUsuario; 

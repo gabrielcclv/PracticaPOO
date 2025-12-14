@@ -205,7 +205,7 @@ do {
 
         Usuario* u = biblio.getUsuarios()[i];
         u->blockUser();
-        cout << "Usuario bloqueado." << endl;
+        cout << "Usuario bloqueado: " << biblio.getUsuarios()[i]->getNombre() << endl;
     }
       break;
     case 3:{ // Unblock User
@@ -218,7 +218,7 @@ do {
 
         Usuario* u = biblio.getUsuarios()[i];
         u->unblockUser();
-        cout << "Usuario desbloqueado." << endl;
+        cout << "Usuario desbloqueado: " << biblio.getUsuarios()[i]->getNombre() << endl;
     }
       break;
     default:
@@ -247,7 +247,7 @@ do {
       cin >> idUsuario;
     
       biblio.loanItem(idUsuario, idItem);
-      cout << "Prestamo realizado." << endl;
+
       break;
     case 2:
 
@@ -257,7 +257,7 @@ do {
         cin >> idUsuario;
 
         biblio.returnItem(idUsuario, idItem);
-        cout << "Devolucion realizada." << endl;
+
       break;
     default:
       cout << "Opcion invalida" << endl;
