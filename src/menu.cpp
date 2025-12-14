@@ -6,6 +6,7 @@
 #include "Users/usuario.hpp"
 #include "Users/prestamos.hpp"
 #include "menu.hpp"
+#include <cstdlib>
 
 using namespace std;
 
@@ -16,15 +17,17 @@ void addBook(Biblioteca &biblio) {
     cout << "Ingrese el ID: ";
     cin >> id;
     cout << "Ingrese el titulo: ";
-    cin >> titulo;
+    cin.ignore();
+    getline(cin, titulo);
     cout << "Ingrese el autor: ";
-    cin >> autor;
+    getline(cin, autor);
     cout << "Ingrese el año: ";
     cin >> year;
     cout << "Ingrese el genero: ";
-    cin >> genero;
+    cin.ignore();
+    getline(cin, genero);
     cout << "Ingrese la editorial: ";
-    cin >> editorial;
+    getline(cin, editorial);
     cout << "Ingrese el isbn: ";
     cin >> isbn;
     string tipo = "Libro";
@@ -40,15 +43,17 @@ void addJournal(Biblioteca &biblio) {
     cout << "Ingrese el ID: ";
     cin >> id;
     cout << "Ingrese el titulo: ";
-    cin >> titulo;
+    cin.ignore();
+    getline(cin, titulo);
     cout << "Ingrese el autor: ";
-    cin >> autor;
+    getline(cin, autor);
     cout << "Ingrese el año: ";
     cin >> year;
     cout << "Ingrese el genero: ";
-    cin >> genero;
+    cin.ignore();
+    getline(cin, genero);
     cout << "Ingrese la editorial: ";
-    cin >> editorial;
+    getline(cin, editorial);;
     cout << "Ingrese el issn: ";
     cin >> issn;
     string tipo = "Revista";
@@ -65,17 +70,19 @@ void addThesis(Biblioteca &biblio) {
     cout << "Ingrese el ID: ";
     cin >> id;
     cout << "Ingrese el titulo: ";
-    cin >> titulo;
+    cin.ignore();
+    getline(cin, titulo);
     cout << "Ingrese el autor: ";
-    cin >> autor;
+    getline(cin, autor);
     cout << "Ingrese el año: ";
     cin >> year;
     cout << "Ingrese el genero: ";
-    cin >> genero;
+    cin.ignore();
+    getline(cin, genero);
     cout << "Ingrese la editorial: ";
-    cin >> editorial;
+    getline(cin, editorial);
     cout << "Ingrese el director: ";
-    cin >> director;
+    getline(cin, director);
     string tipo = "Tesis";
 
     Item *newItem =
@@ -104,7 +111,6 @@ do {
 
   switch (opcion) {
   case 1: {
-    system("cls");
 
     cout << "1. Add Item" << endl;
     cout << "2. Remove Item" << endl;
@@ -116,7 +122,6 @@ do {
 
     switch (opcion2) {
     case 1: { // Add Item
-        system("cls");
 
       int opcion3;
       cout << "1. Add Book" << endl;
@@ -126,15 +131,12 @@ do {
       cin >> opcion3;
       switch (opcion3) {
       case 1: {
-        system("cls");
         addBook(biblio);
       } break;
       case 2: {
-        system("cls");
         addJournal(biblio);
       } break;
       case 3: {
-        system("cls");
         addThesis(biblio);
       } break;
       default:
@@ -144,7 +146,6 @@ do {
       break;
     }
     case 2:{  // Remove Item
-        system("cls");
 
         biblio.Biblioteca::getCatalogo().printCatalogo();
         size_t i;
@@ -153,7 +154,6 @@ do {
         biblio.Biblioteca::getCatalogo().removeItemPorLista(i);
     }  break;
     case 3:{ // Edit Item
-        system("cls");
 
         biblio.Biblioteca::getCatalogo().printCatalogo();
         size_t i;
@@ -169,7 +169,6 @@ do {
     break;
   }
   case 2: {
-    system("cls");
 
     cout << "1. Add User" << endl;
     cout << "2. Block User" << endl;
@@ -181,14 +180,15 @@ do {
 
     switch (opcion2) {
     case 1: { //Add User
-        system("cls");
+
         string nombre, rol;
         int id;
 
         cout << "Nombre del usuario: ";
-        cin >> nombre;
+        cin.ignore();
+        getline(cin, nombre);
         cout << "Rol del usuario: ";
-        cin >> rol;
+        getline(cin, rol);
         cout << "ID del usuario: ";
         cin >> id;
 
@@ -197,24 +197,25 @@ do {
     }
       break;
     case 2: { // Block User
-        system("cls");
         cout << "Usuarios: " << endl;
         biblio.printUsuarios();
         size_t i;
         cout << "Ingrese el numero del usuario a bloquear: ";
         cin >> i;
+
         Usuario* u = biblio.getUsuarios()[i];
         u->blockUser();
         cout << "Usuario bloqueado." << endl;
     }
       break;
     case 3:{ // Unblock User
-        system("cls");
+
         cout << "Usuarios: " << endl;
         biblio.printUsuarios();
         size_t i;
         cout << "Ingrese el numero del usuario a desbloquear: ";
         cin >> i;
+
         Usuario* u = biblio.getUsuarios()[i];
         u->unblockUser();
         cout << "Usuario desbloqueado." << endl;
@@ -227,7 +228,7 @@ do {
     break;
   }
   case 3: {
-    system("cls");
+
     cout << "1. Loan" << endl;
     cout << "2. Return" << endl;
 
@@ -237,7 +238,7 @@ do {
 
     switch (opcion2) {
     case 1:
-    system("cls");
+
     int idUsuario, idItem;
     
       cout << "ID del item: ";
@@ -249,7 +250,6 @@ do {
       cout << "Prestamo realizado." << endl;
       break;
     case 2:
-    system("cls");
 
         cout << "ID del item: ";
         cin >> idItem;
@@ -266,7 +266,6 @@ do {
     break;
   }
   case 4: {
-    system("cls");
     cout << "1. Search" << endl;
     cout << "2. List" << endl;
 
@@ -276,7 +275,6 @@ do {
 
     switch (opcion2) {
     case 1:{ // Search
-        system("cls");
         string autorBuscado;
         cout << "Ingrese el autor a buscar: ";
         cin.ignore();
@@ -292,7 +290,7 @@ do {
     }
       break;
     case 2:{ // List
-        system("cls");
+
         biblio.getCatalogo().printCatalogo();
     }
       break;
@@ -303,11 +301,11 @@ do {
     break;
   }
   case 5: // Report
-  system("cls");
+
     biblio.generarReportePorRol();
     break;
   case 6: // Exit
-  system("cls");
+
   salir = true;
     cout << "Saliendo del programa..." << endl;
 
