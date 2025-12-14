@@ -160,3 +160,15 @@ void Catalogo::editItemPorLista(std::size_t index) {
     }
     cout << "Item editado." << endl;
 }
+
+Item* Catalogo::getItemById(int id){
+    auto it = find_if(items.begin(), items.end(), [id](Item* it) {
+        return it->getId() == id;
+    });
+
+    if (it != items.end()) {
+        return *it;
+    } else {
+        return nullptr;
+    }
+}

@@ -2,10 +2,11 @@
 #define PRESTAMOS_HPP
 
 #include <chrono>
+#include "usuario.hpp"
 
 using namespace std;
 
-class Prestamos {
+class Prestamo {
 private:
   int id;
   int idUsuario;
@@ -15,17 +16,14 @@ private:
   chrono::system_clock::time_point fechaDevolucion;
   int sancionAcumulada;
   bool devuelto;
-
+  Usuario* usuario;
 public:
   // Constructor
-  Prestamos(int id, int idUsuario, int idItem, chrono::system_clock::time_point fechaInicio, chrono::system_clock::time_point fechaLimite, chrono::system_clock::time_point fechaDevolucion, int sancionAcumulada, bool devuelto);
+  Prestamo(int id, int idUsuario, int idItem, chrono::system_clock::time_point fechaInicio, chrono::system_clock::time_point fechaLimite, chrono::system_clock::time_point fechaDevolucion, int sancionAcumulada, bool devuelto);
 
   // Destructor
-  ~Prestamos();
+  ~Prestamo();
 
-  // Metodos
-  void returnItem();
-  void loanItem();
 
   chrono::system_clock::time_point getFechaLimite();
   chrono::system_clock::time_point getFechaDevolucion();
@@ -35,6 +33,10 @@ public:
   int getIdUsuario();
   int getIdItem();
   bool getDevuelto();
+
+  void setDevuelto(bool estado);
+  void setFechaDevolucion(chrono::system_clock::time_point fecha);
+  void setSancionAcumulada(int sancion);
 };
 
 #endif

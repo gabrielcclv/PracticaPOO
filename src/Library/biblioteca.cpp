@@ -4,6 +4,7 @@
 #include "../Items/thesis.hpp"
 #include "../Users/usuario.hpp"
 #include "../catalog.hpp"
+#include "../Users/prestamos.hpp"
 #include <algorithm>
 #include <chrono>
 #include <fstream>
@@ -123,8 +124,7 @@ void Biblioteca::cargarPrestamosCSV(string ruta) {
       int sancionAcumulada = safe(6).empty() ? 0 : stoi(safe(6));
       bool devuelto = (safe(7) == "true");
 
-      Prestamo *p = new Prestamo(id, idUsuario, idItem, fechaInicio, fechaLimite,
-                                 fechaDevolucion, sancionAcumulada, devuelto);
+      Prestamo *p = new Prestamo(id, idUsuario, idItem, fechaInicio, fechaLimite, fechaDevolucion, sancionAcumulada, devuelto);
       prestamos.push_back(p);
     } catch (const std::exception &e) {
       cerr << "Error parsing prestamos.csv linea: '" << linea << "' -> "
@@ -166,6 +166,104 @@ void Biblioteca::printUsuarios(){
     Usuario* u = usuarios[i];
     cout << i << ". " << u->getNombre() << endl;
   }
+}
+
+void Biblioteca::loanItem(int idUsuario, int idItem){
+  auto it = find_if(usuarios.begin(), usuarios.end(), [idUsuario](Usuario* u) {
+    return u->getIdUsuario() == idUsuario;
+  });
+
+  Item* itemPrestado = catalogo.getItemById(idItem);
+
+  if (itemPrestado == nullptr) {
+    cout << "Item con ID " << idItem << " no encontrado en el catalogo." << endl;
+    return;
+  }
+
+  auto itPrestamo = find_if(prestamos.begin(), prestamos.end(), [idItem](Prestamo* p) {
+            // Buscamos si coincide el ID del item y si no ha sido devuelto
+            return p->getIdItem() == idItem && !p->getDevuelto();
+        });
+
+    if (itPrestamo != prestamos.end()) {
+        cout << "Error: El item '" << itemPrestado->getTitulo() << "' ya se encuentra prestado." << endl;
+        return;
+    }
+
+  if (it != usuarios.end()) {
+    Usuario* usuario = *it;
+
+    // Crear nuevo prestamo
+    auto ahora = chrono::system_clock::now();
+    auto limite = ahora + chrono::hours(24 * 15); // 15 días
+
+    Prestamo* nuevoPrestamo = new Prestamo( prestamos.size() + 1, idUsuario, idItem, ahora, limite, chrono::system_clock::time_point(), 0, false);
+
+    addPrestamo(nuevoPrestamo);
+
+    time_t tiempoLimite = chrono::system_clock::to_time_t(limite);
+    cout << "Item '" << itemPrestado->getTitulo() << "' prestado a '"
+         << usuario->getNombre() << "' hasta "
+         << ctime(&tiempoLimite) << endl;
+  } else {
+    cout << "Usuario con ID " << idUsuario << " no encontrado." << endl;
+  }
+}
+
+
+void Biblioteca::returnItem(int idUsuario, int idItem){
+    // Buscar el préstamo activo para el item
+  auto itPrestamo = find_if(prestamos.begin(), prestamos.end(), 
+        [idItem](Prestamo* p) { 
+            return p->getIdItem() == idItem && !p->getDevuelto(); 
+        });
+
+    if (itPrestamo == prestamos.end()) {
+        cout << "No se encontró un préstamo activo para el item ID " << idItem << endl;
+        return;
+    }
+
+    Prestamo* prestamo = *itPrestamo;
+
+    // Establecer fecha de devolución
+    auto ahora = chrono::system_clock::now();
+    prestamo->setFechaDevolucion(ahora);
+    prestamo->setDevuelto(true);
+
+    // Calcular retraso y sanción
+    if (ahora > prestamo->getFechaLimite()) {
+        auto duracion = ahora - prestamo->getFechaLimite();
+        
+        // Convertir la duración a horas y dividir por 24 para sacar días enteros
+        long diasRetraso = chrono::duration_cast<chrono::hours>(duracion).count() / 24;
+        
+        // Si ha pasado menos de un día completo pero ya pasó la hora, cuenta como 1 día
+        if (diasRetraso == 0) diasRetraso = 1; 
+
+        // Calcular multa (Variante A1: 0.10 por día, tope 15)
+        double multa = diasRetraso * 0.10;
+        if (multa > 15.0) multa = 15.0;
+
+        cout << "Item devuelto con " << diasRetraso << " dias de retraso." << endl;
+        cout << "Sancion aplicada: " << multa << " euros." << endl;
+
+        // 4. Buscar al usuario para cobrarle la multa
+        int idUsuario = prestamo->getIdUsuario();
+        auto itUsuario = find_if(usuarios.begin(), usuarios.end(), [idUsuario](Usuario* u) { 
+          return u->getIdUsuario() == idUsuario; 
+        });
+
+        if (itUsuario != usuarios.end()) {
+            (*itUsuario)->sumarSancion(multa);
+            // Guardar sanción en el historial del préstamo también
+            prestamo->setSancionAcumulada(multa);
+        }
+
+    } else {
+        cout << "Item devuelto a tiempo. Gracias." << endl;
+    }
+
+
 }
 
 // Politica de sanciones, A1

@@ -21,5 +21,7 @@ public:
 
     void removeItemPorLista(std::size_t index);
 
+    Item* getItemById(int id);
+
 };
 #endif

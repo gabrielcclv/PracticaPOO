@@ -3,6 +3,8 @@
 #include "Items/book.hpp"
 #include "Items/journal.hpp"
 #include "Items/thesis.hpp"
+#include "Users/usuario.hpp"
+#include "Users/prestamos.hpp"
 #include "menu.hpp"
 
 using namespace std;
@@ -215,6 +217,14 @@ void Menu(Biblioteca &biblio) {
 
     switch (opcion2) {
     case 1:
+    int idUsuario, idItem;
+    
+      cout << "ID del item: ";
+      cin >> idItem;
+      cout << "ID del usuario: ";
+      cin >> idUsuario;
+    
+      biblio.loanItem(idUsuario, idItem);
       break;
     case 2:
       break;

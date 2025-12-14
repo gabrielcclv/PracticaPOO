@@ -25,44 +25,15 @@ public:
   int getIdUsuario();
   string getNombre();
   string getRol();
-
+  int getSancion();
+  bool isBloqueado();
   // Metodos
   void blockUser();
   void unblockUser();
   void blockUserPorLista();
   void unblockUserPorLista();
-};
 
-class Prestamo {
-private:
-  int id;
-  int idUsuario;
-  int idItem;
-  chrono::system_clock::time_point fechaLimite;
-  chrono::system_clock::time_point fechaInicio;
-  chrono::system_clock::time_point fechaDevolucion;
-  int sancionAcumulada;
-  bool devuelto;
-
-public:
-  // Constructor
-  Prestamo(int id, int idUsuario, int idItem, chrono::system_clock::time_point fechaInicio, chrono::system_clock::time_point fechaLimite, chrono::system_clock::time_point fechaDevolucion, int sancionAcumulada, bool devuelto);
-
-  // Destructor
-  ~Prestamo();
-
-  // Metodos
-  void returnItem();
-  void loanItem();
-
-  chrono::system_clock::time_point getFechaLimite() { return fechaLimite; }
-  chrono::system_clock::time_point getFechaDevolucion() { return fechaDevolucion; }
-  chrono::system_clock::time_point getFechaInicio() { return fechaInicio; }
-  int getSancionAcumulada() { return sancionAcumulada; }
-  int getIdPrestamo() { return id; }
-  int getIdUsuario() { return idUsuario; }
-  int getIdItem() { return idItem; }
-  bool getDevuelto() { return devuelto; }
+  void sumarSancion(double monto);
 };
 
 #endif

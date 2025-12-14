@@ -1,46 +1,52 @@
 #include "prestamos.hpp"
 
-void Prestamos::returnItem() {
-    devuelto = true;
-    fechaDevolucion = chrono::system_clock::now(); 
-}
+using namespace std;
 
-void Prestamos::loanItem() {
-    devuelto = false;
-    fechaInicio = chrono::system_clock::now();
-}
+Prestamo::~Prestamo() {}
 
-chrono::system_clock::time_point Prestamos::getFechaLimite() {
+chrono::system_clock::time_point Prestamo::getFechaLimite() {
   return fechaLimite;
 }
 
-chrono::system_clock::time_point Prestamos::getFechaDevolucion() {
+chrono::system_clock::time_point Prestamo::getFechaDevolucion() {
   return fechaDevolucion;
 }
 
-chrono::system_clock::time_point Prestamos::getFechaInicio() {
+chrono::system_clock::time_point Prestamo::getFechaInicio() {
   return fechaInicio;
 }
 
-int Prestamos::getSancionAcumulada() {
+int Prestamo::getSancionAcumulada() {
   return sancionAcumulada;
 }
 
-int Prestamos::getIdPrestamo() {
+int Prestamo::getIdPrestamo() {
   return id;
 }
 
-int Prestamos::getIdUsuario() {
+int Prestamo::getIdUsuario() {
   return idUsuario;
 }
 
-int Prestamos::getIdItem() {
+int Prestamo::getIdItem() {
   return idItem;
 }
 
-bool Prestamos::getDevuelto() {
+bool Prestamo::getDevuelto() {
   return devuelto;
 }
 
-Prestamos::Prestamos(int id, int idUsuario, int idItem, chrono::system_clock::time_point fechaInicio, chrono::system_clock::time_point fechaLimite, chrono::system_clock::time_point fechaDevolucion, int sancionAcumulada, bool devuelto)
+Prestamo::Prestamo(int id, int idUsuario, int idItem, chrono::system_clock::time_point fechaInicio, chrono::system_clock::time_point fechaLimite, chrono::system_clock::time_point fechaDevolucion, int sancionAcumulada, bool devuelto)
     : id(id), idUsuario(idUsuario), idItem(idItem), fechaInicio(fechaInicio), fechaLimite(fechaLimite), fechaDevolucion(fechaDevolucion), sancionAcumulada(sancionAcumulada), devuelto(devuelto) {}
+
+void Prestamo::setDevuelto(bool estado) {
+  devuelto = estado;
+}
+
+void Prestamo::setFechaDevolucion(chrono::system_clock::time_point fecha) {
+  fechaDevolucion = fecha;
+}
+
+void Prestamo::setSancionAcumulada(int sancion) {
+  sancionAcumulada = sancion;
+}

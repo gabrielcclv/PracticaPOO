@@ -4,6 +4,7 @@
 #include "../Items/item.hpp"
 #include "../Users/usuario.hpp"
 #include "../catalog.hpp"
+#include "../Users/prestamos.hpp"
 #include <vector>
 #include <string>
 
@@ -50,5 +51,8 @@ public:
   vector<Prestamo *> &getPrestamos();
 
   void printUsuarios();
+
+  void loanItem(int idUsuario, int idItem);
+  void returnItem(int idUsuario, int idItem);
 };
 #endif
